@@ -1,3 +1,4 @@
+mastodon
 streamlit
 selenium
 pandas
