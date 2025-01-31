@@ -96,8 +96,8 @@ def main():
     st.write("#### Trending Hashtags")
     trending_hashtags = fetch_trending_hashtags()
     hashtag_df = pd.DataFrame(trending_hashtags, columns=['name', 'url'])
-    st.table(hashtag_df[['name']])  # Display only hashtag names
-    st.caption("**Explanation:** This table shows the top 30 trending hashtags on Mastodon. These are the most popular hashtags being used across the platform.")
+    st.table(hashtag_df[['name']])  
+    st.caption("**Explanation:** This table shows the top  trending hashtags on Mastodon. These are the most popular hashtags being used across the platform.")
 
     st.write("#### Trending Statuses")
     trending_statuses = fetch_trending_statuses()
