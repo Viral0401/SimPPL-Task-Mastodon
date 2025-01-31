@@ -32,7 +32,6 @@ The goal of this project is to build a **data-driven social media analysis tool*
 ### **Trending Page**
 - **Trending Hashtags**: Displays the top 30 trending hashtags on Mastodon.
 - **Trending Statuses**: Shows the top 30 trending posts with engagement metrics (favorites, boosts, replies).
-- **Engagement Metrics**: Visualizes engagement metrics using bar charts.
 - **Word Cloud**: Generates a word cloud of the most frequent words in trending posts.
 - **Sentiment Analysis**: Analyzes the sentiment of trending posts and displays the distribution.
 - **LLM-Based Topic Modeling**: Uses a large language model (LLM) to identify the top 5 trending topics.
