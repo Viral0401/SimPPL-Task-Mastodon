@@ -60,7 +60,7 @@ def analyze_sentiment(df):
     return df
 
 def get_top_topics(statuses, n_topics=5):
-    client = Groq(api_key="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")
+    client = Groq(api_key="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")
 
     prompt = f"""
     Below are multiple social media statuses. Identify the top {n_topics} topics that are currently trending. 
