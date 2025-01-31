@@ -137,6 +137,8 @@ if st.button("Fetch Posts"):
         with st.spinner(f"Fetching posts for {query}..."):
             df = fetch_real_time_posts(query, iterations=5, delay=5)
             if not df.empty:
+                df['Polarity'] = df['Content'].apply(calculate_polarity)
+                df['Sentiment'] = df['Polarity'].apply(classify_sentiment)
                 st.subheader(f"Recent Posts for #{query}")
                 st.dataframe(df)
 
