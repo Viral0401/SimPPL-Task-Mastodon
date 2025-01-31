@@ -105,28 +105,24 @@ def fetch_real_time_posts(topic, iterations=5, delay=5):
     return pd.DataFrame(all_data)
 
 def create_network_graphs(df):
-    df['Processed_Hashtags'] = df['Hashtags'].apply(preprocess_hashtags)
+    hashtag_pairs = []
+    for hashtags in df['Hashtags']:
+        if len(hashtags) > 1:
+            hashtag_pairs.extend(combinations(hashtags, 2))
+    
     G = nx.Graph()
-
-    for hashtags in df['Processed_Hashtags']:
-        for i, hashtag1 in enumerate(hashtags):
-            for j in range(i + 1, len(hashtags)):
-                hashtag2 = hashtags[j]
-                if G.has_edge(hashtag1, hashtag2):
-                    G[hashtag1][hashtag2]['weight'] += 1
-                else:
-                    G.add_edge(hashtag1, hashtag2, weight=1)
-
-    threshold = 2
-    G = G.subgraph([node for node, degree in G.degree() if degree >= threshold])
+    for pair in hashtag_pairs:
+        if G.has_edge(*pair):
+            G[pair[0]][pair[1]]['weight'] += 1
+        else:
+            G.add_edge(pair[0], pair[1], weight=1)
 
     plt.figure(figsize=(15, 10))
-    pos = nx.spring_layout(G, k=0.3)
-    node_sizes = [G.degree(node) * 200 for node in G.nodes()]
-    nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="skyblue", font_size=8, font_weight="bold", edge_color="gray", alpha=0.7)
+    pos = nx.spring_layout(G, k=0.5)
+    node_sizes = [G.degree(node) * 100 for node in G.nodes()]
+    nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="skyblue", font_size=10, font_weight="bold", edge_color="gray")
     plt.title("Network Graph of Hashtag Co-occurrences")
-
-    st.pyplot(plt) 
+    st.pyplot(plt)
 
 def visualize_graph(graph, height="600px"):
     nt = Network(height=height, width="100%", bgcolor="#222222", font_color="white")
