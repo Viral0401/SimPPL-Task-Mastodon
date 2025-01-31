@@ -11,5 +11,4 @@ textblob
 numpy
 scikit-learn
 plotly
-python-dotenv==0.21.0
 openai
