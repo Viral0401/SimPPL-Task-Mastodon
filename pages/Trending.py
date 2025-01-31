@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = "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"
 
 mastodon = Mastodon(
     access_token='pytooter_usercred.secret', 
