@@ -1,7 +1,6 @@
 streamlit
 Mastodon.py
 pandas
-time
 networkx
 pyvis
 wordcloud
