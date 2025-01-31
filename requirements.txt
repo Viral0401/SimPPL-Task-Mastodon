@@ -10,3 +10,4 @@ scikit-learn
 openai
 python-dotenv
 mastodon.py
+networkx
