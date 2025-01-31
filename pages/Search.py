@@ -89,6 +89,7 @@ def sentiment_analysis_visualizations(df):
         plt.xlabel("Number of Likes")
         plt.ylabel("Polarity")
         st.pyplot(plt)
+        st.caption("Explanation: The scatter plot shows the relationship between the number of likes and the sentiment polarity of posts.")
     else:
         st.warning("The dataset doesn't contain a 'favourites_count' column for the scatter plot.")
 
@@ -248,20 +249,29 @@ if st.button("Fetch Posts"):
             if not df.empty:
                 df['Polarity'] = df['Content'].apply(calculate_polarity)
                 df['Sentiment'] = df['Polarity'].apply(classify_sentiment)
-                st.subheader(f"Recent Posts for #{query}")
-                st.dataframe(df)
 
+                # Display recent posts
+                st.subheader(f"Recent Posts for {query}")
+                st.dataframe(df)
+                st.caption("**Explanation:** We have fetched the data on the topic, and it contains the Content, Favourites, Boosts, Replies, and Hashtags.")
+
+                # Download CSV
                 csv = df.to_csv(index=False).encode('utf-8')
                 st.download_button("Download data as CSV", data=csv, 
                                  file_name=f"{query}_posts.csv", mime='text/csv')
-                
-                # st.subheader("Word Cloud of Post Content")
-                # generate_wordcloud(" ".join(df['Content'].dropna()), query)
-                
+
+                # Hashtag Co-occurrence Network
                 st.subheader("Hashtag Co-occurrence Network")
                 hashtag_graph = create_network_graphs(df)
+                st.caption("**Explanation:** This graph shows how hashtags are used together in the same posts. Nodes represent hashtags, and edges represent co-occurrence. ")
+
+                # Sentiment Analysis Visualizations
                 sentiment_analysis_visualizations(df)
+                st.caption("**Explanation:** The scatter plot shows the relationship between the number of likes and the sentiment polarity of posts. The pie chart shows the distribution of positive, neutral, and negative sentiments.")
+
+                # Word Clouds
                 generate_wordclouds(df, query)
+                st.caption("**Explanation:** These word clouds visualize the most frequent words in positive and negative posts. Larger words indicate higher frequency.")
 
             else:
                 st.write("No posts found for this hashtag.")
