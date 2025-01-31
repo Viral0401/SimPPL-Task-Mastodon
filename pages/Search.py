@@ -21,24 +21,14 @@ import matplotlib.pyplot as plt
 from textblob import TextBlob
 from wordcloud import WordCloud
 import numpy as np
-nltk.download('punkt')
+nltk.download('punkt_tab')
+
 nltk.download('stopwords')
 
 mastodon = Mastodon(
     access_token="pytooter_usercred",  
     api_base_url="https://mastodon.social"
 )
-
-def preprocess_hashtags(hashtags):
-    stop_words = set(stopwords.words('english'))
-    english_words = set(words.words())
-    processed_hashtags = []
-    for hashtag in hashtags:
-        hashtag = re.sub(r'\W+', '', hashtag)
-        word_tokens = word_tokenize(hashtag)
-        filtered_text = [w for w in word_tokens if w.lower() not in stop_words and w.isalpha() and (w.lower() in english_words or w.istitle())]
-        processed_hashtags.extend(filtered_text)
-    return processed_hashtags
 
 def calculate_polarity(text):
     return TextBlob(text).sentiment.polarity
@@ -52,12 +42,14 @@ def classify_sentiment(polarity):
         return 'Neutral'
 
 def generate_wordclouds(df, query):
+   
     positive_text = " ".join(df[df['Polarity'] > 0]['Content'])
     negative_text = " ".join(df[df['Polarity'] < 0]['Content'])
     positive_text = re.sub(r'http\S+|https\S+', '', positive_text)
     positive_text = re.sub(r'\b' + re.escape(query) + r'\b', '', positive_text, flags=re.IGNORECASE)
     negative_text = re.sub(r'http\S+|https\S+', '', negative_text)
     negative_text = re.sub(r'\b' + re.escape(query) + r'\b', '', negative_text, flags=re.IGNORECASE)
+
 
     positive_wordcloud = WordCloud(width=800, height=400, background_color='white').generate(positive_text)
     negative_wordcloud = WordCloud(width=800, height=400, background_color='black', colormap='Reds').generate(negative_text)
@@ -104,6 +96,13 @@ def clean_text(content):
     clean_text = re.sub(r'\s+', ' ', clean_text)
     return clean_text.strip()
 
+from textblob import TextBlob
+import matplotlib.pyplot as plt
+import streamlit as st
+
+def calculate_polarity(text):
+    return TextBlob(text).sentiment.polarity
+
 def fetch_real_time_posts(topic, iterations=5, delay=1):
     hashtag = topic.replace(" ", "")
     all_data = []
@@ -130,7 +129,7 @@ def fetch_real_time_posts(topic, iterations=5, delay=1):
 
     return pd.DataFrame(all_data)
 
-def generate_wordcloud(text, query):
+def generate_wordcloud(text,query):
     text = re.sub(r'http\S+|https\S+', '', text)
     text = re.sub(r'\b' + re.escape(query) + r'\b', '', text, flags=re.IGNORECASE)
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
@@ -163,10 +162,30 @@ def create_author_connection_graph(df):
         
     return G
 
+
+def preprocess_hashtags(hashtags):
+    stop_words = set(stopwords.words('english'))
+    english_words = set(words.words())
+    processed_hashtags = []
+    for hashtag in hashtags:
+        hashtag = re.sub(r'\W+', '', hashtag)
+        word_tokens = word_tokenize(hashtag)
+        filtered_text = [w for w in word_tokens if w.lower() not in stop_words and w.isalpha() and (w.lower() in english_words or w.istitle())]
+        processed_hashtags.extend(filtered_text)
+    return processed_hashtags
+
+import networkx as nx
+import matplotlib.pyplot as plt
+import streamlit as st
+
 def create_network_graphs(df):
+    # Preprocess hashtags
     df['Processed_Hashtags'] = df['Hashtags'].apply(preprocess_hashtags)
+
+    # Create a graph based on hashtag co-occurrences
     G = nx.Graph()
 
+    # Add nodes and edges based on hashtag co-occurrences
     for hashtags in df['Processed_Hashtags']:
         for i, hashtag1 in enumerate(hashtags):
             for j in range(i + 1, len(hashtags)):
@@ -176,16 +195,15 @@ def create_network_graphs(df):
                 else:
                     G.add_edge(hashtag1, hashtag2, weight=1)
 
-    threshold = 2
-    G = G.subgraph([node for node, degree in G.degree() if degree >= threshold])
-
+    # Draw the graph with hashtag co-occurrences
     plt.figure(figsize=(15, 10))
     pos = nx.spring_layout(G, k=0.3)
-    node_sizes = [G.degree(node) * 200 for node in G.nodes()]
-    nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="skyblue", font_size=8, font_weight="bold", edge_color="gray", alpha=0.7)
+    node_sizes = [G.degree(node) * 100 for node in G.nodes()]
+    nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="skyblue", font_size=5, font_weight="bold", edge_color="gray")
     plt.title("Network Graph of Hashtag Co-occurrences")
 
-    st.pyplot(plt) 
+    # Render the graph in Streamlit
+    st.pyplot(plt)  # This will display the plot correctly in Streamlit
 
 def visualize_graph(graph, height="600px"):
     nt = Network(height=height, width="100%", bgcolor="#222222", font_color="white")
@@ -204,6 +222,7 @@ def visualize_graph(graph, height="600px"):
     """)
     return nt
 
+
 st.title("Mastodon Hashtag Lookup & Visualization")
 query = st.text_input("Enter a topic to search for posts:")
 
@@ -220,6 +239,9 @@ if st.button("Fetch Posts"):
                 csv = df.to_csv(index=False).encode('utf-8')
                 st.download_button("Download data as CSV", data=csv, 
                                  file_name=f"{query}_posts.csv", mime='text/csv')
+                
+                # st.subheader("Word Cloud of Post Content")
+                # generate_wordcloud(" ".join(df['Content'].dropna()), query)
                 
                 st.subheader("Hashtag Co-occurrence Network")
                 hashtag_graph = create_network_graphs(df)
