@@ -118,9 +118,9 @@ def create_network_graphs(df):
             G.add_edge(pair[0], pair[1], weight=1)
 
     plt.figure(figsize=(15, 10))
-    pos = nx.spring_layout(G, k=0.5)
-    node_sizes = [G.degree(node) * 100 for node in G.nodes()]
-    nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="skyblue", font_size=10, font_weight="bold", edge_color="gray")
+    pos = nx.spring_layout(G, k=0.3)
+    node_sizes = [G.degree(node) * 200 for node in G.nodes()]
+    nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="skyblue", font_size=5, font_weight="light", edge_color="gray")
     plt.title("Network Graph of Hashtag Co-occurrences")
     st.pyplot(plt)
 
