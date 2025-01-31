@@ -12,6 +12,7 @@ from sklearn.decomposition import LatentDirichletAllocation
 import openai
 from dotenv import load_dotenv
 import os
+from groq import Groq
 
 load_dotenv()
 openai.api_key = "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"
@@ -59,9 +60,8 @@ def analyze_sentiment(df):
     return df
 
 def get_top_topics(statuses, n_topics=5):
-    """
-    Uses OpenAI's GPT to extract the top trending topics from a list of social media statuses.
-    """
+    client = Groq(api_key="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")
+
     prompt = f"""
     Below are multiple social media statuses. Identify the top {n_topics} topics that are currently trending. 
     Provide short and concise topic labels.
@@ -72,10 +72,12 @@ def get_top_topics(statuses, n_topics=5):
     Return only the topics in a numbered list.
     """
 
-    response = openai.chat.completions.create(
-        model="gpt-4-turbo",
-        messages=[{"role": "system", "content": "You are an AI that identifies trending topics from text data."},
-                  {"role": "user", "content": prompt}]
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {"role": "system", "content": "You are an AI that identifies trending topics from text data."},
+            {"role": "user", "content": prompt}
+        ]
     )
 
     topics = response.choices[0].message.content.strip()
@@ -111,7 +113,7 @@ def main():
     fig = px.histogram(trending_statuses, x='Sentiment', title='Sentiment Distribution')
     st.plotly_chart(fig)
 
-    st.write("#### GPT-Based Topic Modeling")
+    st.write("#### LLM Based Topic Modeling")
     trending_texts = "\n".join(trending_statuses['content'].tolist())
     trending_topics = get_top_topics(trending_texts)
     st.write(trending_topics)
