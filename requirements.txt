@@ -1,0 +1,12 @@
+streamlit
+selenium
+pandas
+plotly
+wordcloud
+matplotlib
+beautifulsoup4
+textblob
+scikit-learn
+openai
+python-dotenv
+mastodon.py
