@@ -1,12 +1,12 @@
 # Mastodon Social Media Analysis Tool
 
-## 🌐 Live App
+## Live App
 The app is hosted on Streamlit and can be accessed here:  
 👉 **[Mastodon Analysis Tool](https://mastodonanalysis.streamlit.app/)** 👈
 
 ---
 
-## 📝 Overview
+## Overview
 This project is a **Streamlit-based web application** that analyzes trending data from **Mastodon**, a decentralized social media platform. The app allows users to:
 1. **Explore trending hashtags and statuses** on Mastodon.
 2. **Search for specific topics** and analyze related posts.
@@ -19,7 +19,7 @@ The app is divided into two main pages:
 
 ---
 
-## 🎯 Task Description
+## Task Description
 The goal of this project is to build a **data-driven social media analysis tool** that:
 1. Fetches real-time data from Mastodon using its API.
 2. Provides **interactive visualizations** to analyze trends, engagement, and sentiment.
@@ -28,7 +28,7 @@ The goal of this project is to build a **data-driven social media analysis tool*
 
 ---
 
-## 🛠️ Features
+##  Features
 ### **Trending Page**
 - **Trending Hashtags**: Displays the top 30 trending hashtags on Mastodon.
 - **Trending Statuses**: Shows the top 30 trending posts with engagement metrics (favorites, boosts, replies).
